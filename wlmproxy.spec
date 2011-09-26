@@ -10,8 +10,8 @@ Source: http://github.com/poetinha/%{name}/tarball/master/%{version}/poetinha-%{
 Source1: wlmproxy.sysconfig
 Source2: wlmproxy.init
 URL:	http://wlmproxy.org
-BuildRequires: libxml2_2, libxml2-devel, openssl, libevent2, boost-static-devel, dolphin-connector
-BuildRequires: libevent-devel, dolphin-connector-devel
+BuildRequires: xml2_2, xml2-devel, openssl, event2, boost-static-devel, dolphin-connector
+BuildRequires: event-devel, dolphin-connector-devel
 BuildRoot: %_tmppath/%{name}-%{version}-buildroot
 
 %description
