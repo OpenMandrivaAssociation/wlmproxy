@@ -11,7 +11,7 @@ Source1: wlmproxy.sysconfig
 Source2: wlmproxy.init
 URL:	http://wlmproxy.org
 BuildRequires: libxml2_2, libxml2-devel, openssl, libevent2, boost-static-devel, dolphin-connector
-BuildRequires: libevent-devel
+BuildRequires: libevent-devel, dolphin-connector-devel
 BuildRoot: %_tmppath/%{name}-%{version}-buildroot
 
 %description
