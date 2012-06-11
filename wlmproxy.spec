@@ -1,22 +1,20 @@
 %define svnversion g8daae3e
 
-Name: wlmproxy
-Summary: wlmproxy is a transparent proxy server for the MSN protocol
-Version: 0.1.3
-Release: %mkrel 1
-License: GPLv3
-Group: Monitoring
-Source: http://github.com/poetinha/%{name}/tarball/master/%{version}/poetinha-%{name}-v%{version}-0-%{svnversion}.tar.gz
-Source1: wlmproxy.sysconfig
-Source2: wlmproxy.init
-URL:	http://wlmproxy.org
-BuildRequires: openssl, boost-static-devel, dolphin-connector, dolphin-connector-devel
-%if %{_arch} == i386
-BuildRequires: libevent-devel, libxml2_2, libxml2-devel, libevent2
-%else
-BuildRequires: lib64event-devel, lib64xml2_2, lib64xml2-devel, lib64event2
-%endif
-BuildRoot: %_tmppath/%{name}-%{version}-buildroot
+Summary:	wlmproxy is a transparent proxy server for the MSN protocol
+Name:		wlmproxy
+Version:	0.1.3
+Release:	2
+License:	GPLv3
+Group:		Monitoring
+URL:		http://wlmproxy.org
+Source0:	http://github.com/poetinha/%{name}/tarball/master/%{version}/poetinha-%{name}-v%{version}-0-%{svnversion}.tar.gz
+Source1:	wlmproxy.sysconfig
+Source2:	wlmproxy.init
+BuildRequires:	openssl
+BuildRequires:	boost-devel
+BuildRequires:	dolphin-connector-devel
+BuildRequires:	pkgconfig(libevent)
+BuildRequires:	pkgconfig(libxml-2.0)
 
 %description
 wlmproxy is a transparent proxy server for the MSN protocol.
@@ -36,15 +34,12 @@ Main Features:
 - Policy enforcement notification
 
 %prep
-rm -rf %{buildroot}
 %setup -q -n poetinha-%{name}-cf05d38/
 
 %build
-make %{?_smp_mflags} CXXFLAGS="$RPM_OPT_FLAGS"
+%make 
 
 %install
-rm -rf %{buildroot}
-
 mkdir -p -m 755 %{buildroot}%{_sysconfdir}/%{name}
 mkdir -p -m 755 %{buildroot}%{_sbindir}
 mkdir -p %{buildroot}%{_initrddir}
@@ -71,13 +66,13 @@ if [ $1 -eq 0 ]; then
 	/sbin/service %{name} stop >/dev/null 2>&1
 	/sbin/chkconfig --del %{name}
 fi
+
 %files
-%defattr(-,root,root-)
 %doc ChangeLog create_mysql.sql LICENSE README TODO
+%dir %{_sysconfdir}/%{name}
+%config(noreplace) %{_sysconfdir}/%{name}/*
 %config(noreplace) %{_sysconfdir}/sysconfig/%{name}
 %{_initrddir}/%{name}
 %attr(755,wlmproxy,wlmproxy) %dir %{_localstatedir}/run/%{name}
-%attr(755,root,root) %dir %{_sysconfdir}/%{name}
-%attr(640,root,wlmproxy) %config(noreplace) %{_sysconfdir}/%{name}/*
 %{_sbindir}/*
 
