@@ -1,7 +1,7 @@
 %define svnversion g8daae3e
 
 Name:		wlmproxy
-Summary:	wlmproxy is a transparent proxy server for the MSN protocol
+Summary:	Transparent proxy server for the MSN protocol
 Version:	0.1.3
 Release:	2
 License:	GPLv3
