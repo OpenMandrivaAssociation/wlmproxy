@@ -3,7 +3,7 @@
 Name:		wlmproxy
 Summary:	Transparent proxy server for the MSN protocol
 Version:	0.1.3
-Release:	2
+Release:	3
 License:	GPLv3
 Group:		Monitoring
 Url:		http://wlmproxy.org
@@ -37,7 +37,7 @@ Main Features:
 %setup -qn poetinha-%{name}-cf05d38/
 
 %build
-%make CXXFLAGS="$RPM_OPT_FLAGS"
+%make CXXFLAGS="%{optflags}"
 
 %install
 mkdir -p -m 755 %{buildroot}%{_sysconfdir}/%{name}
