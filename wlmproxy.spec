@@ -1,17 +1,18 @@
 %define svnversion g8daae3e
 
 Name:		wlmproxy
-Summary:	Transparent proxy server for the MSN protocol
+Summary:	wlmproxy is a transparent proxy server for the MSN protocol
 Version:	0.1.3
-Release:	3
+Release:	5
 License:	GPLv3
 Group:		Monitoring
-Url:		http://wlmproxy.org
 Source0:	http://github.com/poetinha/%{name}/tarball/master/%{version}/poetinha-%{name}-v%{version}-0-%{svnversion}.tar.gz
 Source1:	wlmproxy.sysconfig
-Source2:	wlmproxy.init
+Source2:	wlmproxy.service
+Url:		http://wlmproxy.org
 BuildRequires:	openssl
-BuildRequires:	boost-devel
+BuildRequires:	boost-static-devel
+BuildRequires:	dolphin-connector
 BuildRequires:	dolphin-connector-devel
 BuildRequires:	pkgconfig(libevent)
 BuildRequires:	pkgconfig(libxml-2.0)
@@ -34,7 +35,7 @@ Main Features:
 - Policy enforcement notification
 
 %prep
-%setup -qn poetinha-%{name}-cf05d38/
+%setup -q -n poetinha-%{name}-cf05d38/
 
 %build
 %make CXXFLAGS="%{optflags}"
@@ -42,34 +43,36 @@ Main Features:
 %install
 mkdir -p -m 755 %{buildroot}%{_sysconfdir}/%{name}
 mkdir -p -m 755 %{buildroot}%{_sbindir}
-mkdir -p %{buildroot}%{_initrddir}
+mkdir -p %{buildroot}%{_unitdir}
 mkdir -p %{buildroot}%{_sysconfdir}/sysconfig
 mkdir -p %{buildroot}%{_localstatedir}/run/%{name}
 
 install -p -m 755 wlmproxy %{buildroot}%{_sbindir}
 install -p -m 644 %{SOURCE1} %{buildroot}%{_sysconfdir}/sysconfig/%{name}
-install -p -m 744 %{SOURCE2} %{buildroot}%{_initddir}/%{name}
+install -D -m0644 %{SOURCE2} %{buildroot}%{_unitdir}/%{name}.service
 install -p -m 640 wlmproxy.conf %{buildroot}%{_sysconfdir}/%{name}
 
+sed "s:sysconfig:%{_sysconfdir}/sysconfig:" -i %{buildroot}%{_unitdir}/%{name}.service
+
 %pre
-getent group wlmproxy >/dev/null || groupadd -r wlmproxy
-getent passwd wlmproxy >/dev/null || \
-useradd -r -f wlmproxy -d '/' -s /sbin/nologin \ 
-    -c 'wlmproxy daemon account' wlmproxy
-exit 0
+# % _pre_groupadd %{name}
+%_pre_useradd %{name} %{_localstatedir}/lib/%{name} /sbin/nologin
 
 %post
-/sbin/chkconfig --add %{name}
+%systemd_post %{name}.service
 
 %preun
-if [ $1 -eq 0 ]; then
-	/sbin/service %{name} stop >/dev/null 2>&1
-	/sbin/chkconfig --del %{name}
-fi
+%systemd_preun %{name}.service
+
+%postun
+%_postun_userdel %{name}
+%_postun_groupdel %{name}
+%systemd_postun_with_restart %{name}.service
+
 %files
 %doc ChangeLog create_mysql.sql LICENSE README TODO
 %config(noreplace) %{_sysconfdir}/sysconfig/%{name}
-%{_initrddir}/%{name}
+%attr(0644,root,root) %{_unitdir}/%{name}.service
 %attr(755,wlmproxy,wlmproxy) %dir %{_localstatedir}/run/%{name}
 %attr(755,root,root) %dir %{_sysconfdir}/%{name}
 %attr(640,root,wlmproxy) %config(noreplace) %{_sysconfdir}/%{name}/*
