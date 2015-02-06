@@ -3,7 +3,7 @@
 Name:		wlmproxy
 Summary:	wlmproxy is a transparent proxy server for the MSN protocol
 Version:	0.1.3
-Release:	5
+Release:	6
 License:	GPLv3
 Group:		Monitoring
 Source0:	http://github.com/poetinha/%{name}/tarball/master/%{version}/poetinha-%{name}-v%{version}-0-%{svnversion}.tar.gz
